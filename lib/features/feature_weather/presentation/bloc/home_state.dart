@@ -8,4 +8,5 @@ class HomeState{
   HomeState copyWith({CwStatus? newCwStatus}){
     return HomeState(cwStatus: newCwStatus ?? this.cwStatus);
   }
+
 }

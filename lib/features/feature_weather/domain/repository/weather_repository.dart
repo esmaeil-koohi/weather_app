@@ -3,6 +3,6 @@ import 'package:weather_app/features/feature_weather/domain/entities/current_cit
 
 abstract class WeatherRepository{
 
-Future<DataState<CurrentCityEntity>>  fetchCurrentWeatherData(String cityName);
+Future<DataState<CurrentCityEntity>> fetchCurrentWeatherData(String cityName);
 
 }

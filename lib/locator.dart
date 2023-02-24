@@ -5,7 +5,7 @@ import 'package:weather_app/features/feature_weather/domain/repository/weather_r
 import 'package:weather_app/features/feature_weather/domain/use_cases/get_current_weather_usecase.dart';
 import 'package:weather_app/features/feature_weather/presentation/bloc/home_bloc.dart';
 
-GetIt locator = GetIt.instance();
+GetIt locator = GetIt.instance;
 
 setUp(){
   locator.registerSingleton<ApiProvider>(ApiProvider());
