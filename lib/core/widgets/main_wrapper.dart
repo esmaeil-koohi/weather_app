@@ -1,43 +1,39 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:weather_app/features/feature_weather/presentation/bloc/cw_state.dart';
-import 'package:weather_app/features/feature_weather/presentation/bloc/home_bloc.dart';
+import 'package:weather_app/core/widgets/app_background.dart';
+import 'package:weather_app/core/widgets/bottom_nav.dart';
+import 'package:weather_app/features/feature_bookmark/presentation/screens/bookmark_screen.dart';
+import 'package:weather_app/features/feature_weather/presentation/screens/home_screen.dart';
 
-class MainWrapper extends StatefulWidget {
-  const MainWrapper({Key? key}) : super(key: key);
+class MainWrapper extends StatelessWidget {
+   MainWrapper({Key? key}) : super(key: key);
 
-  @override
-  State<MainWrapper> createState() => _MainWrapperState();
-}
+   PageController pageController = PageController(initialPage: 0);
 
-class _MainWrapperState extends State<MainWrapper> {
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    BlocProvider.of<HomeBloc>(context).add(LoadCwEvent('Tehran'));
-  }
   @override
   Widget build(BuildContext context) {
+
+    List<Widget> pageViewWidget=[
+      HomeScreen(),
+      BookMarkScreen(),
+    ];
+    double height = MediaQuery.of(context).size.height;
+
     return Scaffold(
-      appBar: AppBar(),
-      body: BlocBuilder<HomeBloc, HomeState>(
-        builder: (context, state) {
-          if(state.cwStatus is CwLoading){
-            return const Center(child: Text('loading ...'),);
-          }
-          
-          if(state.cwStatus is CwCompleted){
-            return const Center(child: Text('completed'),);
-          }
-
-          if(state.cwStatus is CwError){
-            return const Center(child: Text('error'),);
-          }
-
-          return Container(child: const Text('هیچکدام'),);
-        }),
-      );
+      extendBody: true,
+      bottomNavigationBar: BottomNav(Controller: pageController,),
+      body: Container(
+        height: height,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AppBackground.getBackGroundImage(),
+              fit: BoxFit.cover,
+            )
+          ),
+          child: PageView(
+            controller: pageController,
+            children: pageViewWidget,
+          ),
+      ),
+    );
   }
 }
-
