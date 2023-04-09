@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:weather_app/core/params/forecastParams.dart';
 import 'package:weather_app/core/widgets/app_background.dart';
@@ -7,10 +8,14 @@ import 'package:weather_app/core/widgets/dot_loading.dart';
 import 'package:weather_app/features/feature_weather/data/models/forcast_days_model.dart';
 import 'package:weather_app/features/feature_weather/domain/entities/current_city_entity.dart';
 import 'package:weather_app/features/feature_weather/domain/entities/forecase_day_entity.dart';
+import 'package:weather_app/features/feature_weather/domain/use_cases/get_suggestion_city.dart';
 import 'package:weather_app/features/feature_weather/presentation/bloc/cw_state.dart';
 import 'package:weather_app/features/feature_weather/presentation/bloc/fw_status.dart';
 import 'package:weather_app/features/feature_weather/presentation/bloc/home_bloc.dart';
 import 'package:weather_app/features/feature_weather/presentation/widgets/days_weather_view.dart';
+import 'package:weather_app/locator.dart';
+
+import '../../data/models/suggest_city_model.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -21,6 +26,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   TextEditingController textEditingController = TextEditingController();
+  GetSuggestionCityUseCase getSuggestionCityUseCase = GetSuggestionCityUseCase(locator());
   String cityName = 'Tehran';
   final PageController _pageController = PageController();
 
@@ -38,6 +44,46 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          SizedBox(height: height * 0.02,),
+          Padding(padding: EdgeInsets.symmetric(horizontal: width * 0.03)),
+          TypeAheadField(
+            textFieldConfiguration: TextFieldConfiguration(
+              onSubmitted: (String prefix) {
+                textEditingController.text = prefix;
+                BlocProvider.of<HomeBloc>(context)
+                    .add(LoadCwEvent(prefix));
+              },
+              controller: textEditingController,
+              style: DefaultTextStyle.of(context).style.copyWith(
+                fontSize: 20,
+                color: Colors.white,
+              ),
+              decoration: const InputDecoration(
+                contentPadding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                hintText: "Enter a City...",
+                hintStyle: TextStyle(color: Colors.white),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white),
+                ),
+              ),),
+              suggestionsCallback: (String prefix) {
+                return getSuggestionCityUseCase(prefix);
+              },
+              itemBuilder: (context, Data model) {
+                 return ListTile(
+                   leading:  const Icon(Icons.location_on),
+                   title: Text(model.name!),
+                   subtitle: Text("${model.region}, ${model.country}"),
+                 );
+              },
+              onSuggestionSelected:(Data model) {
+                textEditingController.text = model.name!;
+                BlocProvider.of<HomeBloc>(context).add(LoadCwEvent(model.name!));
+              }, ),
+
           BlocBuilder<HomeBloc, HomeState>(
             buildWhen: (previous, current) {
               if(previous.cwStatus == current.cwStatus){
