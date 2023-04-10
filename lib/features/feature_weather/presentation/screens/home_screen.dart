@@ -15,6 +15,7 @@ import 'package:weather_app/features/feature_weather/presentation/bloc/home_bloc
 import 'package:weather_app/features/feature_weather/presentation/widgets/days_weather_view.dart';
 import 'package:weather_app/locator.dart';
 
+import '../../../../core/utils/date_converter.dart';
 import '../../data/models/suggest_city_model.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -100,7 +101,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 final CurrentCityEntity currentCityEntity = cwCompleted.currentCityEntity;
                 final ForecastParams forecastParams = ForecastParams (currentCityEntity.coord!.lat!, currentCityEntity.coord!.lon!);
                 BlocProvider.of<HomeBloc>(context).add(LoadFwEvent(forecastParams));
-
+                final sunrise = DateConverter.changeDtToDateTimeHour(currentCityEntity.sys!.sunrise,currentCityEntity.timezone);
+                final sunset =  DateConverter.changeDtToDateTimeHour(currentCityEntity.sys!.sunset,currentCityEntity.timezone);
                 return Expanded(
                     child: ListView(
                   children: [
@@ -311,6 +313,103 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
 
+                    const SizedBox(height: 30,),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Column(
+                          children: [
+                            Text("wind speed",
+                              style: TextStyle(
+                                fontSize: height * 0.017, color: Colors.amber,),),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 10.0),
+                              child: Text(
+                                "${currentCityEntity.wind!.speed!} m/s",
+                                style: TextStyle(
+                                  fontSize: height * 0.016,
+                                  color: Colors.white,),),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10),
+                          child: Container(
+                            color: Colors.white24,
+                            height: 30,
+                            width: 2,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10.0),
+                          child: Column(
+                            children: [
+                              Text("sunrise",
+                                style: TextStyle(
+                                  fontSize: height * 0.017,
+                                  color: Colors.amber,),),
+                              Padding(
+                                padding:
+                                const EdgeInsets.only(top: 10.0),
+                                child: Text(sunrise,
+                                  style: TextStyle(
+                                    fontSize: height * 0.016,
+                                    color: Colors.white,),),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10),
+                          child: Container(
+                            color: Colors.white24,
+                            height: 30,
+                            width: 2,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10.0),
+                          child: Column(children: [
+                            Text("sunset",
+                              style: TextStyle(
+                                fontSize: height * 0.017, color: Colors.amber,),),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 10.0),
+                              child: Text(sunset,
+                                style: TextStyle(
+                                  fontSize: height * 0.016,
+                                  color: Colors.white,),),
+                            ),
+                          ],),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10),
+                          child: Container(
+                            color: Colors.white24,
+                            height: 30,
+                            width: 2,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10.0),
+                          child: Column(children: [
+                            Text("humidity",
+                              style: TextStyle(
+                                fontSize: height * 0.017, color: Colors.amber,),),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 10.0),
+                              child: Text(
+                                "${currentCityEntity.main!.humidity!}%",
+                                style: TextStyle(
+                                  fontSize: height * 0.016,
+                                  color: Colors.white,),),
+                            ),
+                          ],),
+                        ),
+                      ],),
+
+                     const SizedBox(height: 30,),
                   ],
                 ));
               }

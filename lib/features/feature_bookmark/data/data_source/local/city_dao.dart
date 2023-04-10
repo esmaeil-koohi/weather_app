@@ -9,7 +9,7 @@ abstract class CityDao{
   Future<List<City>> getAllCity();
   
   @Query('SELECT * FROM City WHERE name = :name')
-  Future<City?> findCityById(String name);
+  Future<City?> findCityByName(String name);
 
   @insert
   Future<void> insertCity(City city);
