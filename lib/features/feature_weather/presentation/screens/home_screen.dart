@@ -16,7 +16,9 @@ import 'package:weather_app/features/feature_weather/presentation/widgets/days_w
 import 'package:weather_app/locator.dart';
 
 import '../../../../core/utils/date_converter.dart';
+import '../../../feature_bookmark/presentation/bloc/bookmark_bloc.dart';
 import '../../data/models/suggest_city_model.dart';
+import '../widgets/bookmark_icon.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -47,43 +49,83 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           SizedBox(height: height * 0.02,),
           Padding(padding: EdgeInsets.symmetric(horizontal: width * 0.03)),
-          TypeAheadField(
-            textFieldConfiguration: TextFieldConfiguration(
-              onSubmitted: (String prefix) {
-                textEditingController.text = prefix;
-                BlocProvider.of<HomeBloc>(context)
-                    .add(LoadCwEvent(prefix));
-              },
-              controller: textEditingController,
-              style: DefaultTextStyle.of(context).style.copyWith(
-                fontSize: 20,
-                color: Colors.white,
-              ),
-              decoration: const InputDecoration(
-                contentPadding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                hintText: "Enter a City...",
-                hintStyle: TextStyle(color: Colors.white),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
+          Row(
+            children: [
+            Expanded(child: TypeAheadField(
+              textFieldConfiguration: TextFieldConfiguration(
+                onSubmitted: (String prefix) {
+                  textEditingController.text = prefix;
+                  BlocProvider.of<HomeBloc>(context)
+                      .add(LoadCwEvent(prefix));
+                },
+                controller: textEditingController,
+                style: DefaultTextStyle.of(context).style.copyWith(
+                  fontSize: 20,
+                  color: Colors.white,
                 ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
-                ),
-              ),),
+                decoration: const InputDecoration(
+                  contentPadding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                  hintText: "Enter a City...",
+                  hintStyle: TextStyle(color: Colors.white),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                ),),
               suggestionsCallback: (String prefix) {
                 return getSuggestionCityUseCase(prefix);
               },
               itemBuilder: (context, Data model) {
-                 return ListTile(
-                   leading:  const Icon(Icons.location_on),
-                   title: Text(model.name!),
-                   subtitle: Text("${model.region}, ${model.country}"),
-                 );
+                return ListTile(
+                  leading:  const Icon(Icons.location_on),
+                  title: Text(model.name!),
+                  subtitle: Text("${model.region}, ${model.country}"),
+                );
               },
               onSuggestionSelected:(Data model) {
                 textEditingController.text = model.name!;
                 BlocProvider.of<HomeBloc>(context).add(LoadCwEvent(model.name!));
-              }, ),
+              }, ), ),
+            const SizedBox(width: 10,),
+              BlocBuilder<HomeBloc, HomeState>(
+                  buildWhen: (previous, current){
+                    if(previous.cwStatus == current.cwStatus){
+                      return false;
+                    }
+                    return true;
+                  },
+                  builder: (context, state){
+                    /// show Loading State for Cw
+                    if (state.cwStatus is CwLoading) {
+                      return const CircularProgressIndicator();
+                    }
+
+                    /// show Error State for Cw
+                    if (state.cwStatus is CwError) {
+                      return IconButton(
+                        onPressed: (){
+                          // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          //   content: Text("please load a city!"),
+                          //   behavior: SnackBarBehavior.floating, // Add this line
+                          // ));
+                        },
+                        icon: const Icon(Icons.error,color: Colors.white,size: 35),);
+                    }
+
+                    if(state.cwStatus is CwCompleted){
+                      final CwCompleted cwComplete = state.cwStatus as CwCompleted;
+                      BlocProvider.of<BookmarkBloc>(context).add(GetCityByNameEvent(cwComplete.currentCityEntity.name!));
+                      return BookMarkIcon(name: cwComplete.currentCityEntity.name!);
+                    }
+
+                    return Container();
+
+                  }
+              ),
+          ],),
+
 
           BlocBuilder<HomeBloc, HomeState>(
             buildWhen: (previous, current) {

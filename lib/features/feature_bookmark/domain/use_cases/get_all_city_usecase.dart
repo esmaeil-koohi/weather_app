@@ -4,12 +4,12 @@ import 'package:weather_app/features/feature_bookmark/domain/repository/city_rep
 
 import '../entity/city_entity.dart';
 
-class GetAllCityUseCase extends UseCase<DataState<List<City>>, String>{
+class GetAllCityUseCase extends UseCase<DataState<List<City>>, NoParams>{
   final CityRepository _cityRepository;
   GetAllCityUseCase(this._cityRepository);
 
   @override
-  Future<DataState<List<City>>> call(String param) {
+  Future<DataState<List<City>>> call(NoParams) {
     return _cityRepository.getAllCityFromDB();
   }
 
