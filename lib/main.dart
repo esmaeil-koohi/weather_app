@@ -11,7 +11,8 @@ void main() async {
   ///init locator
   await setUp();
 
-  runApp( MaterialApp(
+  runApp(
+    MaterialApp(
     debugShowCheckedModeBanner: false,
     home: MultiBlocProvider(
         providers: [

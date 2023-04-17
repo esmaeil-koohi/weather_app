@@ -37,14 +37,11 @@ class BookmarkBloc extends Bloc<BookmarkEvent, BookmarkState> {
     on<DeleteCityEvent>((event, emit) async {
       /// emit Loading state
       emit(state.copyWith(newDeleteCityStatus: DeleteCityLoading()));
-
       DataState dataState = await deleteCityUseCase(event.name);
-
       /// emit Complete state
       if(dataState is DataSuccess){
         emit(state.copyWith(newDeleteCityStatus: DeleteCityCompleted(dataState.data)));
       }
-
       /// emit Error state
       if(dataState is DataFailed){
         emit(state.copyWith(newDeleteCityStatus: DeleteCityError(dataState.error)));
@@ -53,17 +50,13 @@ class BookmarkBloc extends Bloc<BookmarkEvent, BookmarkState> {
 
     /// get All city
     on<GetAllCityEvent>((event, emit) async {
-
       /// emit Loading state
       emit(state.copyWith(newGetAllCityStatus: GetAllCityLoading()));
-
       DataState dataState = await getAllCityUseCase(NoParams());
-
       /// emit Complete state
       if(dataState is DataSuccess){
         emit(state.copyWith(newGetAllCityStatus: GetAllCityCompleted(dataState.data)));
       }
-
       /// emit Error state
       if(dataState is DataFailed){
         emit(state.copyWith(newGetAllCityStatus: GetAllCityError(dataState.error)));
@@ -73,17 +66,13 @@ class BookmarkBloc extends Bloc<BookmarkEvent, BookmarkState> {
 
     /// get city By name event
     on<GetCityByNameEvent>((event, emit) async {
-
       /// emit Loading state
       emit(state.copyWith(newCityStatus: GetCityLoading()));
-
       DataState dataState = await getCityUseCase(event.cityName);
-
       /// emit Complete state
       if(dataState is DataSuccess){
         emit(state.copyWith(newCityStatus: GetCityCompleted(dataState.data)));
       }
-
       /// emit Error state
       if(dataState is DataFailed){
         emit(state.copyWith(newCityStatus: GetCityError(dataState.error)));
@@ -93,17 +82,13 @@ class BookmarkBloc extends Bloc<BookmarkEvent, BookmarkState> {
 
     /// Save City Event
     on<SaveCwEvent>((event, emit) async {
-
       /// emit Loading state
       emit(state.copyWith(newSaveStatus: SaveCityLoading()));
-
       DataState dataState = await saveCityUseCase(event.name);
-
       /// emit Complete state
       if(dataState is DataSuccess){
         emit(state.copyWith(newSaveStatus: SaveCityCompeted(dataState.data)));
       }
-
       /// emit Error state
       if(dataState is DataFailed){
         emit(state.copyWith(newSaveStatus: SaveCityError(dataState.error.toString())));
@@ -114,6 +99,5 @@ class BookmarkBloc extends Bloc<BookmarkEvent, BookmarkState> {
     on<SaveCityInitialEvent>((event, emit) async {
       emit(state.copyWith(newSaveStatus: SaveCityInitial()));
     });
-
   }
 }

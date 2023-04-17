@@ -27,7 +27,7 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
   TextEditingController textEditingController = TextEditingController();
   GetSuggestionCityUseCase getSuggestionCityUseCase = GetSuggestionCityUseCase(locator());
   String cityName = 'Tehran';
@@ -48,83 +48,83 @@ class _HomeScreenState extends State<HomeScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(height: height * 0.02,),
-          Padding(padding: EdgeInsets.symmetric(horizontal: width * 0.03)),
-          Row(
-            children: [
-            Expanded(child: TypeAheadField(
-              textFieldConfiguration: TextFieldConfiguration(
-                onSubmitted: (String prefix) {
-                  textEditingController.text = prefix;
-                  BlocProvider.of<HomeBloc>(context)
-                      .add(LoadCwEvent(prefix));
-                },
-                controller: textEditingController,
-                style: DefaultTextStyle.of(context).style.copyWith(
-                  fontSize: 20,
-                  color: Colors.white,
-                ),
-                decoration: const InputDecoration(
-                  contentPadding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                  hintText: "Enter a City...",
-                  hintStyle: TextStyle(color: Colors.white),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                ),),
-              suggestionsCallback: (String prefix) {
-                return getSuggestionCityUseCase(prefix);
-              },
-              itemBuilder: (context, Data model) {
-                return ListTile(
-                  leading:  const Icon(Icons.location_on),
-                  title: Text(model.name!),
-                  subtitle: Text("${model.region}, ${model.country}"),
-                );
-              },
-              onSuggestionSelected:(Data model) {
-                textEditingController.text = model.name!;
-                BlocProvider.of<HomeBloc>(context).add(LoadCwEvent(model.name!));
-              }, ), ),
-            const SizedBox(width: 10,),
-              BlocBuilder<HomeBloc, HomeState>(
-                  buildWhen: (previous, current){
-                    if(previous.cwStatus == current.cwStatus){
-                      return false;
-                    }
-                    return true;
+          Padding(padding: EdgeInsets.symmetric(horizontal: width * 0.03),
+            child: Row(
+              children: [
+                Expanded(child: TypeAheadField(
+                  textFieldConfiguration: TextFieldConfiguration(
+                    onSubmitted: (String prefix) {
+                      textEditingController.text = prefix;
+                      BlocProvider.of<HomeBloc>(context)
+                          .add(LoadCwEvent(prefix));
+                    },
+                    controller: textEditingController,
+                    style: DefaultTextStyle.of(context).style.copyWith(
+                      fontSize: 20,
+                      color: Colors.white,
+                    ),
+                    decoration: const InputDecoration(
+                      contentPadding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                      hintText: "Enter a City...",
+                      hintStyle: TextStyle(color: Colors.white),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                    ),),
+                  suggestionsCallback: (String prefix) {
+                    return getSuggestionCityUseCase(prefix);
                   },
-                  builder: (context, state){
-                    /// show Loading State for Cw
-                    if (state.cwStatus is CwLoading) {
-                      return const CircularProgressIndicator();
+                  itemBuilder: (context, Data model) {
+                    return ListTile(
+                      leading:  const Icon(Icons.location_on),
+                      title: Text(model.name!),
+                      subtitle: Text("${model.region}, ${model.country}"),
+                    );
+                  },
+                  onSuggestionSelected:(Data model) {
+                    textEditingController.text = model.name!;
+                    BlocProvider.of<HomeBloc>(context).add(LoadCwEvent(model.name!));
+                  }, ), ),
+                const SizedBox(width: 10,),
+                BlocBuilder<HomeBloc, HomeState>(
+                    buildWhen: (previous, current){
+                      if(previous.cwStatus == current.cwStatus){
+                        return false;
+                      }
+                      return true;
+                    },
+                    builder: (context, state){
+                      /// show Loading State for Cw
+                      if (state.cwStatus is CwLoading) {
+                        return const CircularProgressIndicator();
+                      }
+
+                      /// show Error State for Cw
+                      if (state.cwStatus is CwError) {
+                        return IconButton(
+                          onPressed: (){
+                            // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            //   content: Text("please load a city!"),
+                            //   behavior: SnackBarBehavior.floating, // Add this line
+                            // ));
+                          },
+                          icon: const Icon(Icons.error,color: Colors.white,size: 35),);
+                      }
+
+                      if(state.cwStatus is CwCompleted){
+                        final CwCompleted cwComplete = state.cwStatus as CwCompleted;
+                        BlocProvider.of<BookmarkBloc>(context).add(GetCityByNameEvent(cwComplete.currentCityEntity.name!));
+                        return BookMarkIcon(name: cwComplete.currentCityEntity.name!);
+                      }
+
+                      return Container();
+
                     }
-
-                    /// show Error State for Cw
-                    if (state.cwStatus is CwError) {
-                      return IconButton(
-                        onPressed: (){
-                          // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          //   content: Text("please load a city!"),
-                          //   behavior: SnackBarBehavior.floating, // Add this line
-                          // ));
-                        },
-                        icon: const Icon(Icons.error,color: Colors.white,size: 35),);
-                    }
-
-                    if(state.cwStatus is CwCompleted){
-                      final CwCompleted cwComplete = state.cwStatus as CwCompleted;
-                      BlocProvider.of<BookmarkBloc>(context).add(GetCityByNameEvent(cwComplete.currentCityEntity.name!));
-                      return BookMarkIcon(name: cwComplete.currentCityEntity.name!);
-                    }
-
-                    return Container();
-
-                  }
-              ),
-          ],),
+                ),
+              ],),),
 
 
           BlocBuilder<HomeBloc, HomeState>(
@@ -163,34 +163,34 @@ class _HomeScreenState extends State<HomeScreen> {
                               return Column(
                                 children: [
                                   Padding(
-                                    padding: EdgeInsets.only(top: 50),
+                                    padding: const EdgeInsets.only(top: 50),
                                     child: Text(
                                       currentCityEntity.name!,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 30, color: Colors.white),
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.only(top: 20),
+                                    padding: const EdgeInsets.only(top: 20),
                                     child: Text(
                                       currentCityEntity
                                           .weather![0].description!,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 20, color: Colors.grey),
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.only(top: 20),
+                                    padding: const EdgeInsets.only(top: 20),
                                     child: AppBackground.setIconForMain(
                                       currentCityEntity
                                           .weather![0].description!,
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.only(top: 20),
+                                    padding: const EdgeInsets.only(top: 20),
                                     child: Text(
                                       '${currentCityEntity.main!.temp!.round()}\u00B0',
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 50, color: Colors.white),
                                     ),
                                   ),
@@ -213,14 +213,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ),
                                           Text(
                                             '${currentCityEntity.main!.tempMax!.round()}\u00b0',
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                                 fontSize: 16,
                                                 color: Colors.white),
                                           ),
                                         ],
                                       ),
                                       Padding(
-                                        padding: EdgeInsets.only(
+                                        padding: const EdgeInsets.only(
                                           right: 10,
                                           left: 10,
                                         ),
@@ -243,7 +243,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ),
                                           Text(
                                             '${currentCityEntity.main!.tempMin!.round()}\u00b0',
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                                 fontSize: 16,
                                                 color: Colors.white),
                                           ),
@@ -466,4 +466,8 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }

@@ -14,7 +14,7 @@ class MainWrapper extends StatelessWidget {
 
     List<Widget> pageViewWidget=[
       HomeScreen(),
-      BookMarkScreen(),
+      BookMarkScreen(pageController: pageController,),
     ];
     double height = MediaQuery.of(context).size.height;
 
