@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../feature_bookmark/domain/entity/city_entity.dart';
-import '../../../feature_bookmark/presentation/bloc/bookmark_bloc.dart';
-import '../../../feature_bookmark/presentation/bloc/get_city_status.dart';
-import '../../../feature_bookmark/presentation/bloc/save_city_status.dart';
+import 'package:weather_app/features/feature_bookmark/domain/entity/city_entity.dart';
+import 'package:weather_app/features/feature_bookmark/presentation/bloc/bookmark_bloc.dart';
+import 'package:weather_app/features/feature_bookmark/presentation/bloc/get_city_status.dart';
+import 'package:weather_app/features/feature_bookmark/presentation/bloc/save_city_status.dart';
 
 
 
@@ -18,7 +16,7 @@ class BookMarkIcon extends StatelessWidget {
   Widget build(BuildContext context) {
 
     final height = MediaQuery.of(context).size.height;
-    final width = MediaQuery.of(context).size.width;
+
 
     return BlocBuilder<BookmarkBloc,BookmarkState>(
       buildWhen: (previous, current){
@@ -67,7 +65,7 @@ class BookMarkIcon extends StatelessWidget {
                 final SaveCityError saveCityError = cityState.saveCityStatus as SaveCityError;
 
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(saveCityError.message!),
+                  content: Text(saveCityError.message),
                   behavior: SnackBarBehavior.floating, // Add this line
                 ),);
               }

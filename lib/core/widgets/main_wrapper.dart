@@ -5,7 +5,7 @@ import 'package:weather_app/features/feature_bookmark/presentation/screens/bookm
 import 'package:weather_app/features/feature_weather/presentation/screens/home_screen.dart';
 
 class MainWrapper extends StatelessWidget {
-   MainWrapper({Key? key}) : super(key: key);
+   MainWrapper({super.key});
 
    PageController pageController = PageController(initialPage: 0);
 
@@ -13,7 +13,7 @@ class MainWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
 
     List<Widget> pageViewWidget=[
-      HomeScreen(),
+      const HomeScreen(),
       BookMarkScreen(pageController: pageController,),
     ];
     double height = MediaQuery.of(context).size.height;

@@ -2,9 +2,8 @@ import 'dart:async';
 
 import 'package:floor/floor.dart';
 import 'package:sqflite/sqflite.dart' as sqflite;
-import '../../../domain/entity/city_entity.dart';
-import 'city_dao.dart';
-
+import 'package:weather_app/features/feature_bookmark/data/data_source/local/city_dao.dart';
+import 'package:weather_app/features/feature_bookmark/domain/entity/city_entity.dart';
 
 part 'database.g.dart'; // the generated code will be there
 

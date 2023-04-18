@@ -19,9 +19,9 @@ class WeatherRepositoryImpl extends WeatherRepository{
   @override
   Future<DataState<CurrentCityEntity>> fetchCurrentWeatherData(String cityName) async {
     try{
-      Response response = await apiProvider.callCurrentWeather(cityName);
+      final Response response = await apiProvider.callCurrentWeather(cityName);
       if(response.statusCode == 200){
-          CurrentCityEntity currentCityEntity = CurrentCityModel.fromJson(response.data);
+          final CurrentCityEntity currentCityEntity = CurrentCityModel.fromJson(response.data);
           return DataSuccess(currentCityEntity);
         }else{
           return const DataFailed('something Went Wrong. try again...');

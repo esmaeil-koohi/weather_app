@@ -13,12 +13,12 @@ class CityRepositoryImpl extends CityRepository{
   Future<DataState<City>> saveCityToDB(String cityName) async{
     try{
       // check city exist or not
-      City? checkCity = await cityDao.findCityByName(cityName);
+      final City? checkCity = await cityDao.findCityByName(cityName);
       if(checkCity != null){
         return DataFailed("$cityName has Already exist");
       }
       // insert city to database
-      City city = City(name: cityName);
+     final City city = City(name: cityName);
       await cityDao.insertCity(city);
       return DataSuccess(city);
     }catch(e){
@@ -31,7 +31,7 @@ class CityRepositoryImpl extends CityRepository{
   @override
   Future<DataState<List<City>>> getAllCityFromDB() async {
     try{
-      List<City> cities =  await cityDao.getAllCity();
+      final List<City> cities =  await cityDao.getAllCity();
       return DataSuccess(cities);
     }catch(e){
       return DataFailed(e.toString());
@@ -42,7 +42,7 @@ class CityRepositoryImpl extends CityRepository{
   @override
   Future<DataState<City?>> findCityByName(name) async {
     try{
-      City? city =  await cityDao.findCityByName(name);
+      final City? city =  await cityDao.findCityByName(name);
       return DataSuccess(city);
     }catch(e){
       print(e.toString());
