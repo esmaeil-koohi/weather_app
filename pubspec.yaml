@@ -46,6 +46,8 @@ dependencies:
   smooth_page_indicator: ^1.0.1
   flutter_typeahead: ^4.3.7
   floor: ^1.4.1
+  mockito: ^5.4.0
+  bloc_test: ^9.1.1
 
 dev_dependencies:
   flutter_test:
